@@ -20,7 +20,7 @@ Thread(target=run).start()
 
 load_dotenv()
 
-bot = telebot.TeleBot(os.getenv("TELEGRAM_TOKEN"))
+bot = telebot.TeleBot(os.getenv("7034110540:AAEX1L-VZgRb_utswsYq8fxg0xrFaOKZZD0"))
 user_ids = set()
 
 def get_greeting():
