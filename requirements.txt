@@ -2,3 +2,4 @@ python-dotenv
 requests
 pyTelegramBotAPI
 gTTS
+flask
