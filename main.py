@@ -1,27 +1,25 @@
 import os
 import telebot
 from gtts import gTTS
-from datetime import datetime
 from dotenv import load_dotenv
-from threading import Thread
-from threading import Thread
-from flask import Flask
-
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "Bot is alive", 200
-
-def run():
-    app.run(host='0.0.0.0', port=8080)
-
-Thread(target=run).start()
+from datetime import datetime
 
 load_dotenv()
 
-bot = telebot.TeleBot(os.getenv("7034110540:AAEX1L-VZgRb_utswsYq8fxg0xrFaOKZZD0"))
-user_ids = set()
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+bot = telebot.TeleBot(TELEGRAM_TOKEN)
+
+def generate_voice(text, lang="hi"):
+    tts = gTTS(text=text, lang=lang, slow=False)
+    tts.save("output.mp3")
+    return "output.mp3"
+
+def save_text_to_file(text):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"text_{timestamp}.txt"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(text)
+    return filename
 
 def get_greeting():
     hour = datetime.now().hour
@@ -40,75 +38,28 @@ def handle_start(message):
     greeting = get_greeting()
     welcome_text = f"{greeting}, {first_name}! Welcome to the Voice Bot. Use /bol, /speak or /txt to begin."
     bot.send_message(message.chat.id, welcome_text)
-    user_ids.add(message.chat.id)
 
-@bot.message_handler(commands=['bol'])
-def handle_bol(message):
-    text = message.text.replace("/bol", "").strip()
-    if not text:
-        bot.reply_to(message, "कृपया कोई टेक्स्ट दें।")
-        return
-    tts = gTTS(text=text, lang='hi')
-    filename = "bol.mp3"
-    tts.save(filename)
-    with open(filename, "rb") as f:
-        bot.send_voice(message.chat.id, f)
-    os.remove(filename)
-
-@bot.message_handler(commands=['speak'])
-def handle_speak(message):
-    text = message.text.replace("/speak", "").strip()
-    if not text:
-        bot.reply_to(message, "Please provide some text.")
-        return
-    tts = gTTS(text=text, lang='en')
-    filename = "speak.mp3"
-    tts.save(filename)
-    with open(filename, "rb") as f:
-        bot.send_voice(message.chat.id, f)
-    os.remove(filename)
-
-@bot.message_handler(commands=['txt'])
-def handle_txt(message):
-    text = message.text.replace("/txt", "").strip()
-    if not text:
-        bot.reply_to(message, "कृपया कुछ टेक्स्ट दें।")
-        return
-    filename = "message.txt"
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(text)
-    with open(filename, "rb") as f:
-        bot.send_document(message.chat.id, f)
-    os.remove(filename)
-
-@bot.message_handler(commands=['totalusers'])
-def handle_total_users(message):
-    admin_id = int(os.getenv("ADMIN_ID", "0"))
-    if message.from_user.id != admin_id:
-        bot.reply_to(message, "आपके पास यह कमांड चलाने की अनुमति नहीं है।")
-        return
-    total_users = len(user_ids)
-    bot.reply_to(message, f"Bot ke saath ab tak {total_users} users ne interact kiya hai.")
-
-@bot.message_handler(commands=['broadcast'])
-def handle_broadcast(message):
-    admin_id = int(os.getenv("ADMIN_ID", "0"))
-    if message.from_user.id != admin_id:
-        bot.reply_to(message, "आपके पास यह कमांड चलाने की अनुमति नहीं है।")
-        return
+@bot.message_handler(commands=['bol', 'speak'])
+def handle_voice_commands(message):
     text = message.text.split(maxsplit=1)
     if len(text) < 2:
-        bot.reply_to(message, "कृपया मैसेज दें जो ब्रॉडकास्ट करना है।")
+        bot.reply_to(message, "कृपया कुछ टेक्स्ट भेजें।")
         return
-    msg = text[1]
-    success, fail = 0, 0
-    for uid in list(user_ids):
-        try:
-            bot.send_message(uid, msg)
-            success += 1
-        except:
-            fail += 1
-    bot.reply_to(message, f"Broadcast sent to {success} users, failed for {fail}.")
+    content = text[1]
+    lang = "hi" if message.text.startswith("/bol") else "en"
+    file_path = generate_voice(content, lang)
+    with open(file_path, "rb") as f:
+        bot.send_voice(message.chat.id, f)
 
-bot.remove_webhook()
-bot.infinity_polling()
+@bot.message_handler(commands=['txt'])
+def handle_text_command(message):
+    text = message.text.split(maxsplit=1)
+    if len(text) < 2:
+        bot.reply_to(message, "कृपया कुछ टेक्स्ट भेजें जिसे सेव किया जाए।")
+        return
+    content = text[1]
+    filename = save_text_to_file(content)
+    with open(filename, "rb") as f:
+        bot.send_document(message.chat.id, f)
+
+bot.polling()

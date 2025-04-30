@@ -1,5 +1,3 @@
 python-dotenv
-requests
-flask
-pyTelegramBotAPI
 gTTS
+pyTelegramBotAPI

@@ -1,19 +1,33 @@
-## Commands:
+# Telegram Voice Bot using gTTS (Google Text-to-Speech)
 
-- `/start`  
-  User ko greet karega ("Good Morning", "Good Afternoon", "Good Night") unke naam ke saath.
+## Features
+- Hindi and English text-to-speech
+- Free, no premium required
+- Uses gTTS API
+- Deployable to Koyeb
 
-- `/bol <text>`  
-  Hindi me voice message generate karta hai.
+## Setup
 
-- `/speak <text>`  
-  English me voice message generate karta hai.
+1. Install dependencies:
+```
+pip install -r requirements.txt
+```
 
-- `/txt <text>`  
-  Diya gaya text ek `.txt` file me save karke bhejta hai.
+2. Create `.env` file:
+```
+cp .env.example .env
+```
 
-- `/broadcast <message>`  
-  (Sirf admin ke liye) – Sab users ko ek message broadcast karta hai.
+3. Add your Telegram bot token in `.env`
 
-- `/totalusers`  
-  (Sirf admin ke liye) – Bot ke saath total users ke count ko dekhein.
+## Run Locally
+```
+python main.py
+```
+
+## Deploy to Koyeb
+- Create a GitHub repo and push files
+- Go to [https://app.koyeb.com/](https://app.koyeb.com/)
+- Create service from GitHub
+- Add environment variables: TELEGRAM_TOKEN
+- Done!
