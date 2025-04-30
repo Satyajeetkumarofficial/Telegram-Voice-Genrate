@@ -67,6 +67,15 @@ def handle_txt(message):
         bot.send_document(message.chat.id, f)
     os.remove(filename)
 
+@bot.message_handler(commands=['totalusers'])
+def handle_total_users(message):
+    admin_id = int(os.getenv("ADMIN_ID", "0"))
+    if message.from_user.id != admin_id:
+        bot.reply_to(message, "आपके पास यह कमांड चलाने की अनुमति नहीं है।")
+        return
+    total_users = len(user_ids)
+    bot.reply_to(message, f"Bot ke saath ab tak {total_users} users ne interact kiya hai.")
+
 @bot.message_handler(commands=['broadcast'])
 def handle_broadcast(message):
     admin_id = int(os.getenv("ADMIN_ID", "0"))
