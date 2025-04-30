@@ -4,34 +4,19 @@ from gtts import gTTS
 from datetime import datetime
 from dotenv import load_dotenv
 from threading import Thread
-from flask import Flask, request
+from threading import Thread
+from flask import Flask
 
-API_TOKEN = '7034110540:AAEX1L-VZgRb_utswsYq8fxg0xrFaOKZZD0'
-bot = telebot.TeleBot(API_TOKEN)
-app = Flask(__name__)
+app = Flask('')
 
-# START कमांड
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "नमस्ते! Koyeb पर Webhook से जुड़ गया हूँ!")
-
-# Webhook से अपडेट लें
-@app.route(f"/{API_TOKEN}", methods=["POST"])
-def webhook():
-    json_str = request.get_data().decode("UTF-8")
-    update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])
-    return "ok", 200
-
-# Root URL पर webhook सेट करें
 @app.route('/')
-def index():
-    bot.remove_webhook()
-    bot.set_webhook(url=f"https://small-kiley-santoshh-f856e5f5.koyeb.app/{API_TOKEN}")
-    return "Webhook सेट कर दिया गया!", 200
+def home():
+    return "Bot is alive", 200
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+Thread(target=run).start()
 
 load_dotenv()
 
