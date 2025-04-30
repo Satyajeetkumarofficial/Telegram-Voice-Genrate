@@ -1,3 +1,4 @@
 python-dotenv
-gTTS
+requests
 pyTelegramBotAPI
+gTTS
