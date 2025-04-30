@@ -5,7 +5,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from threading import Thread
 from flask import Flask, request
-import telebot
 
 API_TOKEN = '7034110540:AAEX1L-VZgRb_utswsYq8fxg0xrFaOKZZD0'
 bot = telebot.TeleBot(API_TOKEN)
