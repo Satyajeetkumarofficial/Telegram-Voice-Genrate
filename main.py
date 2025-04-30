@@ -110,4 +110,5 @@ def handle_broadcast(message):
             fail += 1
     bot.reply_to(message, f"Broadcast sent to {success} users, failed for {fail}.")
 
+bot.remove_webhook()
 bot.infinity_polling()
