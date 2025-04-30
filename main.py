@@ -1,17 +1,39 @@
 import os
 import telebot
-from gtts import gTTS
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+
+VOICE_IDS = {
+    "hindi_male": "N2lVS1w4EtoT3dr4eOWO",
+    "hindi_female": "5Q0t7uMcjvnagumL0L3b",
+    "english_male": "pNInz6obpgDQGcFmaJgB",
+    "english_female": "21m00Tcm4TlvDq8ikWAM"
+}
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
-def generate_voice(text, lang="hi"):
-    tts = gTTS(text=text, lang=lang, slow=False)
-    tts.save("output.mp3")
+def generate_voice(text, voice_id, lang="hi"):
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+    headers = {
+        "xi-api-key": ELEVENLABS_API_KEY,
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "text": text,
+        "model_id": "eleven_multilingual_v2",
+        "voice_settings": {
+            "stability": 0.4,
+            "similarity_boost": 0.75
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    with open("output.mp3", "wb") as f:
+        f.write(response.content)
     return "output.mp3"
 
 @bot.message_handler(commands=['bol', 'speak'])
@@ -22,10 +44,10 @@ def handle_message(message):
         return
     content = text[1]
     if message.text.startswith("/bol"):
-        lang = "hi"
+        voice_id = VOICE_IDS["hindi_male"]
     else:
-        lang = "en"
-    file_path = generate_voice(content, lang)
+        voice_id = VOICE_IDS["english_male"]
+    file_path = generate_voice(content, voice_id)
     with open(file_path, "rb") as f:
         bot.send_voice(message.chat.id, f)
 

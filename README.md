@@ -1,9 +1,9 @@
-# Telegram Voice Bot using gTTS (Google Text-to-Speech)
+# Telegram Voice Bot using ElevenLabs
 
 ## Features
-- Hindi and English text-to-speech
-- Free, no premium required
-- Uses gTTS API
+- Hindi, Hinglish, English text-to-speech
+- Male/Female high-quality voices
+- Uses ElevenLabs API
 - Deployable to Koyeb
 
 ## Setup
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-3. Add your Telegram bot token in `.env`
+3. Add your Telegram bot token and ElevenLabs API key in `.env`
 
 ## Run Locally
 ```
@@ -29,5 +29,5 @@ python main.py
 - Create a GitHub repo and push files
 - Go to [https://app.koyeb.com/](https://app.koyeb.com/)
 - Create service from GitHub
-- Add environment variables: TELEGRAM_TOKEN
+- Add environment variables: TELEGRAM_TOKEN and ELEVENLABS_API_KEY
 - Done!
