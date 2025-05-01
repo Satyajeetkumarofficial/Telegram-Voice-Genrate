@@ -3,6 +3,7 @@ import telebot
 import requests
 from dotenv import load_dotenv
 from threading import Thread
+from config import TELEGRAM_TOKEN, ELEVENLABS_API_KEY
 from flask import Flask
 
 app = Flask('')
